@@ -2,9 +2,6 @@
     "name": "dugLa",
     "age": 21,
     "bloodType": "O",
-    "location": "Ba Vi",
-    "major": "software enginear",
-    "weight": 65,
-    "heigth": 175,
-    "salary": "95000$ per year"
+    "sex": true,
+    "height":"170"
 }

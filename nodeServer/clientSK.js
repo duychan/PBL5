@@ -1,4 +1,4 @@
 const socket = io();
-socket.emit("123", {
-  mess: "1123",
+socket.emit("test", {
+  mess: "test message",
 });

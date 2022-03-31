@@ -8,14 +8,11 @@ const userSchema = new Schema({
   },
   passWord: {
     type: String,
-    unique: true,
     require: true,
   },
   name: {
     required: true,
     type: String,
-    maxlength: [30, "Must be less than thirty character"],
-    minlength: [5, "Must be at least five character"],
   },
   gender: {
     required: true,

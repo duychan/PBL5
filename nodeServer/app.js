@@ -8,12 +8,15 @@ const server = require("http").createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const mobileApp = io.of("/mobileApp");
+const userRouter = require("./routers/register");
 
 app.use(express.static(__dirname + "../node_modules/socket.io/client-dist"));
 app.use(express.static(__dirname));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/index.html"));
 });
+app.use(express.json);
+app.use("/user", userRouter);
 io.on("connection", (socket) => {
   console.log(socket.id);
   socket.on("test", (res) => {

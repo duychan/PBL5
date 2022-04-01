@@ -23,6 +23,12 @@ const userSchema = new Schema({
     require: true,
     unique: true,
   },
+  hearts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Heart",
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);

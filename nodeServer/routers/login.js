@@ -20,6 +20,7 @@ router.route("/").post(async (req, res) => {
       return false;
     } else {
       res.status(200).json({
+        status: "login",
         success: true,
         user,
       });

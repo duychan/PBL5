@@ -7,7 +7,10 @@ router.route("/").post(async (req, res) => {
     const { email, passWord, name, gender, phoneNumber } = req.body;
     const user = new User({ email, passWord, name, gender, phoneNumber });
     await user.save();
-    res.status(200).json(user);
+    res.status(200).json({
+      mess: "register successfull",
+      user,
+    });
   } catch (err) {
     res.status(400).json({
       success: false,

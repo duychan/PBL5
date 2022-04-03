@@ -5,6 +5,10 @@ const heartSchema = new Schema({
     type: Date,
     require: true,
   },
+  BPM: {
+    type: Number,
+    require: true,
+  },
   level: {
     type: Number,
   },

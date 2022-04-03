@@ -19,10 +19,12 @@ router.route("/").post(async (req, res) => {
       });
       return false;
     } else {
+      req.session.user = user;
+      console.log(`session ok id object ${req.session.user}`);
       res.status(200).json({
-        status: "login",
+        status: "login successfully",
         success: true,
-        user,
+        newUser: user,
       });
     }
   } catch (err) {}

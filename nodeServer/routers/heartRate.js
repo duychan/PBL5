@@ -1,63 +1,44 @@
 const express = require("express");
 const session = require("express-session");
 const router = express.Router();
-const Heart = require("../models/heart");
-const User = require("../models/user");
+const { Heart } = require("../models/heart");
+const { User } = require("../models/user");
 const client = require("../clientSK");
-const dt = new Date();
-const arrHeart = [];
-const fakeHeart = [
-  {
-    id: "id1",
-    date: dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate(),
-    BPM: 80,
-    level: 2,
-    owner: "id1a",
-  },
-  {
-    id: "id2",
-    date: dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + 1,
-    BPM: 60,
-    level: 1,
-    owner: "id1a",
-  },
-  {
-    id: "id3",
-    date: dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + 2,
-    BPM: 85,
-    level: 3,
-    owner: "id1a",
-  },
-  {
-    id: "id4",
-    date: dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + 3,
-    BPM: 100,
-    level: 3,
-    owner: "id1a",
-  },
-];
+
+//const arrHeart = [];
 router
   .route("/")
-  .get(async (req, res) => {
+  .post(async (req, res, next) => {
     try {
-      console.log(req.session.user);
+      if (req.session.user) {
+        const userId = req.session.user;
+        //console.log(userId);
+        const date = new Date().getTime();
+        const { BPM, level } = req.body;
+        const newHeart = new Heart({ date, BPM, level });
+        const userFounded = await User.findOne({ userId });
+        //console.error(userFounded);
+        newHeart.owner = userFounded;
+        await newHeart.save();
+        userFounded.hearts.push(newHeart);
+        arrHeart.push(newHeart);
+        await userFounded.save();
+        res.status(201).json(userFounded);
+      } else {
+        console.log("no session");
+      }
     } catch (error) {
       console.log(error);
     }
   })
-  .post(async (req, res, next) => {
-    try {
-      const userId = req.session;
-      console.log(userId);
-      const { date, BPM, level } = req.body;
-      const userFounded = await User.findById({ _id: userId });
-      const newHeart = new Heart({ date, BPM, level });
-      newHeart.owner = userFounded;
-      await newHeart.save();
-      arrHeart.push(newHeart);
-      await userFounded.save();
-      res.status(201).json(userFounded);
-    } catch (error) {}
+  .get(async (req, res, next) => {
+    const userId = req.session.user;
+    const user = await User.findOne({ userId });
+    arrHeart = user.hearts;
+    arrHeart.forEach(async (e) => {
+      const heart = await Heart.findOne({ e });
+      console.log(JSON.parse(heart.date));
+    });
   });
 
 module.exports = router;

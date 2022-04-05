@@ -1,11 +1,10 @@
 const express = require("express");
-const session = require("express-session");
 const router = express.Router();
 const { Heart } = require("../models/heart");
 const { User } = require("../models/user");
 const client = require("../clientSK");
+const { urlencoded } = require("express");
 
-//const arrHeart = [];
 router
   .route("/")
   .post(async (req, res, next) => {
@@ -33,11 +32,13 @@ router
   })
   .get(async (req, res, next) => {
     const userId = req.session.user;
-    const user = await User.findOne({ userId });
+    const user = await User.findById(userId);
     arrHeart = user.hearts;
-    arrHeart.forEach(async (e) => {
-      const heart = await Heart.findOne({ e });
-      console.log(JSON.parse(heart.date));
+    const x = arrHeart.map(async (e) => {
+      return await Heart.findOne({ e });
+    });
+    Promise.all(x).then((val) => {
+      res.status(201).json(val);
     });
   });
 

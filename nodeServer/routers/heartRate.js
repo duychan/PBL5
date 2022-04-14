@@ -3,7 +3,6 @@ const router = express.Router()
 const { Heart } = require("../models/heart")
 const { User } = require("../models/user")
 const client = require("../clientSK")
-const { urlencoded } = require("express")
 
 router
   .route("/")
@@ -31,15 +30,28 @@ router
     }
   })
   .get(async (req, res, next) => {
-    const userId = req.session.user
-    const user = await User.findById(userId)
-    arrHeart = user.hearts
-    const x = arrHeart.map(async (e) => {
-      return await Heart.findOne({ e })
-    })
-    Promise.all(x).then((val) => {
-      res.status(201).json(val)
-    })
+    try {
+      const userId = req.session.user
+      if (userId) {
+        const user = await User.findById(userId)
+        arrHeart = user.hearts
+        const x = arrHeart.map(async (e) => {
+          return await Heart.findOne({ e })
+        })
+        Promise.all(x).then((val) => {
+          res.status(201).json(val)
+        })
+      } else {
+        res.status(201).json({
+          mess: "co cai cc",
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(201).json({
+        mess: "co cai cc",
+      })
+    }
   })
 
 module.exports = router

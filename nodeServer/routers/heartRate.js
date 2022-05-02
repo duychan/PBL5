@@ -10,12 +10,10 @@ router
     try {
       if (req.session.user) {
         const userId = req.session.user
-        //console.log(userId);
         const date = new Date().getTime()
         const { BPM, level } = req.body
         const newHeart = new Heart({ date, BPM, level })
         const userFounded = await User.findOne({ userId })
-        //console.error(userFounded);
         newHeart.owner = userFounded
         await newHeart.save()
         userFounded.hearts.push(newHeart)

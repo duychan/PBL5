@@ -44,7 +44,7 @@ app.use("/heart", heartRouter)
 // socket
 io.on("connection", (socket) => {
   console.log(socket.id)
-  socket.on("test", (res) => {
+  socket.on("*", (res) => {
     console.log(res)
   })
 })

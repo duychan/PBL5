@@ -3,7 +3,7 @@ const router = express.Router()
 const { Heart } = require("../models/heart")
 const { User } = require("../models/user")
 const client = require("../clientSK")
-
+const { ECG } = require("../app.js")
 router
   .route("/")
   .post(async (req, res, next) => {
@@ -11,8 +11,8 @@ router
       if (req.session.user) {
         const userId = req.session.user
         const date = new Date().getTime()
-        const { BPM, level } = req.body
-        const newHeart = new Heart({ date, BPM, level })
+        const level = 3 // handle data from ML by pass here
+        const newHeart = new Heart({ date, ECG, level })
         const userFounded = await User.findOne({ userId })
         newHeart.owner = userFounded
         await newHeart.save()

@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(
   session({
-    secret: "yeu hg",
+    secret: "duythaisandinh",
     saveUninitialized: true,
     cookie: { maxAge: oneDay },
     resave: false,
@@ -62,12 +62,28 @@ mobileApp.on("connection", (socket) => {
 })
 
 // sensor
+arrECG = []
 sensor.on("connection", (socket) => {
   console.log("sensor connected")
   socket.on("*", (data) => {
     console.log(data)
   })
+  let ECGs = []
 
+  socket.on("receive", (data) => {
+    ECGs.push(data)
+    if (ECGs.length > 30) {
+      arrECG.push(ECGs)
+      ECGs = []
+    }
+    setTimeout(() => {
+      if (ECGs.length < 30) {
+        ECGs = []
+        console.warn("not enough beat ecg in 60s")
+      }
+    }, 60000)
+    module.exports = { arrECG }
+  })
   socket.on("disconnect", () => {
     console.log("sensor left")
   })

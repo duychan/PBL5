@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 node_modules
 .vs_code/
+pythonTest
+test1.js

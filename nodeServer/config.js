@@ -1,2 +1,3 @@
 const port = 3000;
-module.exports = { port };
+const y = 123;
+module.exports = { port, y };

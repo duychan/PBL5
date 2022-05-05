@@ -1,13 +1,15 @@
 {
   "dependencies": {
+    "child_process": "^1.0.2",
     "cookie-parser": "^1.4.6",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "ip": "^1.1.5",
     "mongoose": "^6.2.8",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.16",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
+    "socketio": "^1.0.0",
     "socketio-wildcard": "^2.0.0"
   },
   "name": "nodeserver",

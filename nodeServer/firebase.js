@@ -7,35 +7,45 @@ import {
   remove,
   update,
 } from "firebase/database";
+//const firebase = require("firebase");
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyA94WHkAm0jpZKnA0OM_9uglfsvY5qndGY",
-  authDomain: "pbl50-7af6b.firebaseapp.com",
-  databaseURL: "https://pbl50-7af6b-default-rtdb.firebaseio.com",
-  projectId: "pbl50-7af6b",
-  storageBucket: "pbl50-7af6b.appspot.com",
-  messagingSenderId: "522600953130",
-  appId: "1:522600953130:web:9a0544553f6ce83be7da53",
-  measurementId: "G-DKX53GPDFF",
+  apiKey: "AIzaSyDpoA6dL5HXI82I9-Sf3jDcMeOIcET8_pQ",
+
+  authDomain: "espfirebase-b9634.firebaseapp.com",
+
+  databaseURL: "https://espfirebase-b9634-default-rtdb.firebaseio.com",
+
+  projectId: "espfirebase-b9634",
+
+  storageBucket: "espfirebase-b9634.appspot.com",
+
+  messagingSenderId: "734966023585",
+
+  appId: "1:734966023585:web:e6a4bdfb2342f03e2a77e0",
+
+  measurementId: "G-62H1KT62HB",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 const db = getDatabase(app);
-let i = 11;
+let i = 0;
 function myLoop() {
   setTimeout(function () {
-    set(ref(db, "users/" + i));
+    set(ref(db, "users/" + i), {
+      name: "123",
+    });
     ++i;
     if (i < 19) {
       myLoop();
     }
-  }, 100);
+  }, 10000);
 }
 myLoop();
 const refUser = ref(db, "users");

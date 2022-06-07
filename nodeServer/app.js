@@ -1,10 +1,10 @@
-const express = require("express")
-const app = express()
-const path = require("path")
-const server = require("http").createServer(app)
-const { Server } = require("socket.io")
-const io = new Server(server)
-const connectDB = require("./db/connect")
+const express = require("express");
+const app = express();
+const path = require("path");
+const server = require("http").createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+const connectDB = require("./db/connect");
 const { User } = require("./models/user");
 connectDB();
 const { port } = require("./config");
@@ -69,18 +69,28 @@ sensor.on("connection", (socket) => {
   socket.on("receive", (data) => {
     //console.log(data);
     ECG.push(data);
+
     if (ECG.length === 20) {
       //console.log(ECG);
-      ECGs.push(ECG);
-      console.log(ECGs);
+      //ECGs.push(ECG);
+      const spawn = require("child_process").spawn;
+      const process = spawn("python3", [
+        "/home/duy/Desktop/code/pbl5/pythonCase/test1.py",
+        ECG,
+      ]);
+      process.stdout.on("data", function (data) {
+        console.log(`result from python ${data} & ${typeof data}`);
+      });
+      console.log(ECG);
       ECG = [];
+      socket.emit("stop");
     }
   });
-  socket.on("stop", () => {
-    module.exports.array = ECGs;
-  });
+
+  socket.on("stop", () => {});
   socket.on("disconnect", () => {
     console.log(`sensor id ${socket.id} has left`);
+    ECG = [];
   });
 });
 

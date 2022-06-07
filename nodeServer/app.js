@@ -3,7 +3,12 @@ const app = express();
 const path = require("path");
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
+});
 const connectDB = require("./db/connect");
 const { User } = require("./models/user");
 connectDB();

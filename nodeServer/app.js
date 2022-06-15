@@ -78,14 +78,7 @@ sensor.on("connection", (socket) => {
     if (ECG.length === 20) {
       //console.log(ECG);
       //ECGs.push(ECG);
-      const spawn = require("child_process").spawn;
-      const process = spawn("python3", [
-        "/home/duy/Desktop/code/pbl5/pythonCase/test1.py",
-        ECG,
-      ]);
-      process.stdout.on("data", function (data) {
-        console.log(`result from python ${data} & ${typeof data}`);
-      });
+
       console.log(ECG);
       ECG = [];
       socket.emit("stop");

@@ -1,4 +1,3 @@
-
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -11,11 +10,9 @@ import os
 import matplotlib.pyplot as plt
 
 class PredictArrhythmia():
-	def __init__(self,user_name):
-		self.user_name=user_name
-		self.directory="./data_predict/"+user_name
-		os.makedirs(self.directory,exist_ok =True)
-
+	def __init__():
+		pass
+		
 	# Phân đoạn array
 	def segmentation(signal):
 		data=signal
@@ -58,18 +55,21 @@ class PredictArrhythmia():
 		self.array_to_img(array,self.directory)
 
 
-	def predict(self,signal):
+	def predict(self,signal,user_name):
+
+		self.directory="./data_predict/"+user_name
+		os.makedirs(self.directory,exist_ok =True)
 
 		self.signal_to_image(signal,self.user_name)
+
+		# down model trc khi sử dụng
 		model = load_model('./Model/model.hdf5')
+
 		images = glob(self.directory + '/*.png')
-
 		pred_li = []
-
 		for i in images:
 			image = cv2.imread(i)
-			pred = model.predict(image.reshape((1, 128, 128, 3)))
-			
+			pred = model.predict(image.reshape((1, 128, 128, 3)))			
 			y_classes = pred.argmax(axis=-1)
 			pred_li.append(y_classes[0])    
 
@@ -87,11 +87,6 @@ class PredictArrhythmia():
 
 
 signal=[]
-clf=PredictArrhythmia("Thai")
-clf.predict(signal)
-
-
-
-
-
+clf=PredictArrhythmia()
+clf.predict(signal,'Thai')
 

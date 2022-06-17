@@ -30,12 +30,12 @@ const db = getDatabase(app);
 let i = 0;
 function myLoop() {
   setTimeout(function () {
-    update(ref(db, "data/"), {
-      name: i,
+    update(ref(db, "ECG/"), {
+      data: "1,2,3,4,5,6,7,8,9,10" + i,
     });
     ++i;
     myLoop();
-  }, 1000);
+  }, 2000);
 }
-
+myLoop();
 module.exports = { myLoop };

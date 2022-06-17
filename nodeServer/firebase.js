@@ -1,11 +1,11 @@
 const e = require("express");
 const fs = require("fs");
-const csv = require("csv-parse");
 const { myLoop } = require("./fireclient");
 const admin = require("firebase-admin");
 const { getDatabase } = require("firebase-admin/database");
 const serviceAccount = require("../config/espfirebase-b9634-firebase-adminsdk-9xr47-a9073cf985.json");
 const { time } = require("console");
+const { resolve } = require("path");
 const spawn = require("child_process").spawn;
 // Initialize Firebase
 
@@ -15,32 +15,8 @@ admin.initializeApp({
   databaseURL: "https://espfirebase-b9634-default-rtdb.firebaseio.com",
 });
 
-const db_realtime = getDatabase();
-const ref = db_realtime.ref("data");
-let ECGs = [];
-myLoop(); // fake data sensor
-let oldTime = 0;
-const writeStream = fs.createWriteStream("data.csv");
-ref.on("child_changed", (snapshot) => {
-  const newData = snapshot.val();
-  let start = new Date().getTime();
-  if (start - oldTime >= 2000) {
-    ECGs = [];
-  }
-  oldTime = start;
-  console.log("value: " + newData);
-  if (ECGs.length <= 5) {
-    ECGs.push(newData);
-  } else {
-    try {
-      writeStream.write(ECGs.join(",") + "\n");
-      // file written successfully
-    } catch (err) {
-      console.error(err);
-    }
-    ECGs = [];
-  }
-});
+const dbRealtime = getDatabase();
+
 const db_store = admin.firestore();
 const date = new Date();
 const newUser = {
@@ -71,10 +47,47 @@ const response = db_store
     console.log(reject);
   });
 
-// const process = spawn("python3", [
-//   "/home/duy/Desktop/code/pbl5/pythonCase/test1.py",
-//   ECG,
-// ]);
-// process.stdout.on("data", function (data) {
-//   console.log(`result from python ${data} & ${typeof data}`);
-// });
+let userId = "";
+const getIdUser = () => {
+  const refUserId = dbRealtime.ref("state");
+  refUserId.on("child_changed", (snapshot) => {
+    const value = snapshot.val();
+    if (value.length > 1) {
+      userId = value;
+    }
+  });
+};
+getIdUser();
+
+const result = () => {
+  return new Promise((resolve, reject) => {
+    const URL_PATH = "/home/duy/Desktop/code/pbl5/pythonCase/test1.py";
+    const process = spawn("python3", [URL_PATH, getECG]);
+    let back;
+    process.stdout.on("data", function (data) {
+      console.log(`result from python ${data} & ${typeof data}`);
+      back = data;
+      resolve(back);
+    });
+    reject("wrong");
+  });
+};
+const getECG = () => {
+  let ECGs = [];
+  const refECG = dbRealtime.ref("ECG");
+  refECG.on("child_changed", (snapshot) => {
+    const value = snapshot.val();
+    ECGs = value.split(",");
+    //console.log(ECGs);
+    result()
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((reject) => {
+        console.log("none");
+      });
+    return ECGs;
+  });
+};
+getECG();
+console.log(`js: ${result}`);

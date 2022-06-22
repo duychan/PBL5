@@ -6,7 +6,8 @@ const { getDatabase } = require("firebase-admin/database");
 const serviceAccount = require("../config/espfirebase-b9634-firebase-adminsdk-9xr47-a9073cf985.json");
 const { time } = require("console");
 const { resolve } = require("path");
-const spawn = require("child_process").spawn;
+const { spawnSync } = require("child_process");
+const { spawn } = require("child_process");
 // Initialize Firebase
 
 admin.initializeApp({
@@ -58,7 +59,7 @@ const getIdUser = () => {
   });
 };
 getIdUser();
-
+myLoop();
 const result = () => {
   return new Promise((resolve, reject) => {
     const URL_PATH = "/home/duy/Desktop/code/pbl5/pythonCase/test1.py";
@@ -75,19 +76,17 @@ const result = () => {
 const getECG = () => {
   let ECGs = [];
   const refECG = dbRealtime.ref("ECG");
+  const URL_PATH = "test1.py";
   refECG.on("child_changed", (snapshot) => {
     const value = snapshot.val();
-    ECGs = value.split(",");
     //console.log(ECGs);
-    result()
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((reject) => {
-        console.log("none");
-      });
-    return ECGs;
+    const process = spawn("python3", [URL_PATH, value]);
+    process.stdout.on("data", (data) => {
+      console.log(data);
+    });
+    process.stderr.on("data", (data) => {
+      console.log("err", data);
+    });
   });
 };
 getECG();
-console.log(`js: ${result}`);

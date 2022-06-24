@@ -47,7 +47,7 @@ const response = db_store
   .catch((reject) => {
     console.log(reject);
   });
-
+ 
 let userId = "";
 const getIdUser = () => {
   const refUserId = dbRealtime.ref("state");

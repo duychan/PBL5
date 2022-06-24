@@ -1,7 +1,7 @@
-import warnings
-warnings.filterwarnings('ignore')
 
 from glob import glob
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 0, 1, 2, 3
 from keras.models import load_model
 from collections import Counter
 import cv2  
@@ -10,11 +10,8 @@ import os
 import matplotlib.pyplot as plt
 
 class PredictArrhythmia():
-	def __init__():
-		pass
-		
 	# Phân đoạn array
-	def segmentation(signal):
+	def segmentation(self, signal):
 		data=signal
 		signals = []
 		count = 1
@@ -30,7 +27,7 @@ class PredictArrhythmia():
 		return signals
 
 	# Convert array to image
-	def array_to_img(array, directory):  
+	def array_to_img(self, array, directory):  
 		count=1
 		for _,i in enumerate(array):
 			
@@ -50,26 +47,25 @@ class PredictArrhythmia():
 			plt.close('all')
 			count+=1
 
-	def signal_to_image(self,signal):			
+	def signal_to_image(self, signal):			
 		array=self.segmentation(signal)
 		self.array_to_img(array,self.directory)
 
 
 	def predict(self,signal,user_name):
 
-		self.directory="./data_predict/"+user_name
+		self.directory="E:/PBL5/algorithm/data_predict/"+user_name
 		os.makedirs(self.directory,exist_ok =True)
 
-		self.signal_to_image(signal,self.user_name)
+		self.signal_to_image(signal)
 
 		# down model trc khi sử dụng
-		model = load_model('./Model/model.hdf5')
-
+		model = load_model('E:/PBL5/algorithm/best_model.hdf5')
 		images = glob(self.directory + '/*.png')
 		pred_li = []
 		for i in images:
 			image = cv2.imread(i)
-			pred = model.predict(image.reshape((1, 128, 128, 3)))			
+			pred = model.predict(image.reshape((1, 128, 128, 3)), verbose= 0)			
 			y_classes = pred.argmax(axis=-1)
 			pred_li.append(y_classes[0])    
 
@@ -77,16 +73,25 @@ class PredictArrhythmia():
 		most_common,num_most_common = Counter(pred_li).most_common(1)[0]
 		print(most_common)
 		
-		if(most_common == 0):
-			print('The patient may have Atrial Fibrillation (AFIB).')
-			print('Number of beats of AFIB tpye are ' + str(num_most_common) + ' out of ' + str(len(images)))
+		#if(most_common == 0):
+			#print('The patient may have Atrial Fibrillation (AFIB).')
+			#print('Number of beats of AFIB tpye are ' + str(num_most_common) + ' out of ' + str(len(images)))
 
-		elif(most_common == 1):
-			print('The patient may be healthy.')
-			print('Number of beats of healthy tpye are ' + str(num_most_common) + ' out of ' + str(len(images)))
+		#elif(most_common == 1):
+			#print('The patient may be healthy.')
+			#print('Number of beats of healthy tpye are ' + str(num_most_common) + ' out of ' + str(len(images)))
 
 
-signal=[]
+import sys
+#z = list(map(int,sys.argv[1].split(",")))
+
+from time import sleep
+import scipy.io
+import numpy as np
+path = 'E:/PBL5/algorithm/201m-0.mat'
+data=scipy.io.loadmat(path)
+data=np.array(data['val'][0])
+signal = data
 clf=PredictArrhythmia()
 clf.predict(signal,'Thai')
 
